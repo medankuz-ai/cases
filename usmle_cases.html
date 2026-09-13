@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>USMLE Cases</title>
+  <style>
+    :root{
+      --bg:#f6f7f9;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --border:#d1d5db;
+      --accent:#2563eb;
+      --accent-soft:#eef2ff;
+      --good:#166534;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+    .wrap{
+      max-width:900px;
+      margin:0 auto;
+      padding:24px 16px 48px;
+    }
+    .hero{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:24px;
+      margin-bottom:18px;
+    }
+    h1{margin:0 0 8px;font-size:30px}
+    .sub{color:var(--muted);line-height:1.55}
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+    }
+    button{
+      border:0;
+      border-radius:10px;
+      padding:10px 14px;
+      font-size:14px;
+      cursor:pointer;
+    }
+    .primary{background:var(--accent);color:#fff}
+    .secondary{background:#e5e7eb;color:var(--text)}
+    .case{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      margin-top:14px;
+      overflow:hidden;
+    }
+    .case-head{
+      width:100%;
+      text-align:left;
+      background:transparent;
+      color:var(--text);
+      padding:18px 20px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      font-size:18px;
+      font-weight:700;
+      border-radius:0;
+    }
+    .case-head:hover{background:#fafafa}
+    .badge{
+      flex:none;
+      font-size:12px;
+      color:var(--muted);
+      font-weight:600;
+    }
+    .case-body{
+      padding:0 20px 20px;
+    }
+    .vignette{
+      line-height:1.65;
+      margin:2px 0 16px;
+    }
+    .task{
+      font-weight:700;
+      margin:12px 0 8px;
+    }
+    .prompts{
+      margin:0;
+      padding-left:20px;
+      line-height:1.65;
+    }
+    .answer{
+      display:none;
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius:12px;
+      background:var(--accent-soft);
+      line-height:1.6;
+    }
+    .answer.open{display:block}
+    .answer strong{color:var(--good)}
+    .answer-list{
+      margin:8px 0 0;
+      padding-left:20px;
+    }
+    .answer-toggle{
+      margin-top:14px;
+      background:var(--accent);
+      color:white;
+    }
+    .hidden{display:none}
+    @media (max-width:600px){
+      h1{font-size:25px}
+      .case-head{font-size:16px}
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>USMLE Cases</h1>
+    <div class="sub">
+      Прочитайте каждый клинический случай и найдите в тексте изученные слова и выражения.
+      Ответы скрыты и открываются по кнопке.
+    </div>
+    <div class="toolbar">
+      <button class="secondary" id="expandAll">Показать все ответы</button>
+      <button class="secondary" id="collapseAll">Скрыть все ответы</button>
+    </div>
+  </section>
+
+  <div id="cases"></div>
+</div>
+
+<script>
+const cases = [
+  {
+    title:"Case 1 — Cardiology",
+    text:"A 64-year-old man reports recurrent exertional chest pain that occurs while climbing stairs and is relieved by rest. On admission, he is conscious and alert. Auscultation reveals a low-pitched diastolic rumble. The physician orders echocardiography to confirm the diagnosis.",
+    prompts:["рецидивирующий","при физической нагрузке","облегчается","при поступлении","в сознании и бодрствует","диастолический низкочастотный шум","подтвердить диагноз"],
+    answers:["recurrent","exertional","is relieved by","on admission","conscious and alert","diastolic rumble","confirm the diagnosis"]
+  },
+  {
+    title:"Case 2 — Gastroenterology",
+    text:"A 27-year-old woman presents with severe stomach cramps and dry heaving. On examination, the abdomen is distended with marked tenderness, guarding, and rebound tenderness. Her symptoms gradually worsen despite supportive care.",
+    prompts:["спазмы в животе","сухие рвотные позывы","при осмотре","вздутый","болезненность","защитное напряжение мышц","болезненность при резком отпускании","постепенно","несмотря на"],
+    answers:["stomach cramps","dry heaving","on examination","distended","tenderness","guarding","rebound tenderness","gradually","despite"]
+  },
+  {
+    title:"Case 3 — Psychiatry",
+    text:"A 22-year-old man has become increasingly socially withdrawn. During the interview, he answers questions in a tangential manner and shows a blunted affect. He is convinced that coworkers are monitoring him. His memory is preserved, and he remains alert and oriented.",
+    prompts:["социально замкнутый","с отклонениями от темы","притуплённый аффект","убеждён","память сохранена","оставаться","в ясном сознании и ориентирован"],
+    answers:["socially withdrawn","in a tangential manner","blunted affect","convinced","memory is preserved","remain","alert and oriented"]
+  },
+  {
+    title:"Case 4 — Pediatrics",
+    text:"A 4-year-old boy is evaluated for developmental delay. According to his mother, he frequently rocks back and forth, becomes upset whenever certain objects are moved, and uses gestures instead of words. He has not met several developmental milestones.",
+    prompts:["задержка развития","по словам матери","часто","раскачиваться взад-вперёд","расстраиваться","всякий раз, когда","определённые предметы","жесты","достигать этапов развития"],
+    answers:["developmental delay","according to his mother","frequently","rocks back and forth","upset","whenever","certain objects","gestures","meet developmental milestones"]
+  },
+  {
+    title:"Case 5 — Urology",
+    text:"A 73-year-old man reports urinary urgency and occasional overflow of urine. On examination, the bladder is distended. The symptoms interfere with daily activities, although the patient is otherwise healthy.",
+    prompts:["императивные позывы к мочеиспусканию","подтекание мочи при переполнении","при осмотре","растянутый","мешать повседневной деятельности","хотя","в остальном здоров"],
+    answers:["urinary urgency","overflow of urine","on examination","distended","interfere with daily activities","although","otherwise healthy"]
+  },
+  {
+    title:"Case 6 — Orthopedics",
+    text:"A 31-year-old woman sustained an injury to the right ankle after a fall. Radiography confirms a fracture. The ankle is immobilized in a cast, and she is instructed to use crutches. At follow-up, swelling has resolved, but range of motion remains limited.",
+    prompts:["получить травму","подтверждать","гипсовая повязка","костыли","разрешиться / пройти","объём движений","оставаться"],
+    answers:["sustain an injury","confirm","cast","crutches","resolve","range of motion","remain"]
+  },
+  {
+    title:"Case 7 — Emergency / Cardiology",
+    text:"A 59-year-old man presents with crushing substernal pain and laboured breathing. A carotid bruit is heard on auscultation. His condition deteriorates, and bedside ultrasonography is obtained as soon as possible. The study shows reduced stroke volume and pulmonary congestion.",
+    prompts:["сильная сдавливающая боль","затруднённое дыхание","сосудистый шум","ухудшаться","прикроватный","получать / выполнять исследование","как можно скорее","ударный объём","застой в лёгких"],
+    answers:["crushing pain","laboured breathing","bruit","deteriorate","bedside","obtain","as soon as possible","stroke volume","pulmonary congestion"]
+  },
+  {
+    title:"Case 8 — Migraine",
+    text:"A 30-year-old woman has recurrent migraine attacks on average four times per month. Sumatriptan provides relief and is used as abortive therapy. She is advised to take it as soon as symptoms begin.",
+    prompts:["рецидивирующий","в среднем","облегчение","купирующая терапия","как только"],
+    answers:["recurrent","on average","relief","abortive therapy","as soon as"]
+  },
+  {
+    title:"Case 9 — Medication use",
+    text:"A 46-year-old patient requests a refill of an antihypertensive medication. The physician notes inconsistent adherence to therapy. Given the necessity of continued treatment, the health provider explains that the medication should be taken in a timely manner and should not be discontinued without medical advice.",
+    prompts:["повторный отпуск препарата","нерегулярная приверженность","учитывая","необходимость","медицинский работник","своевременно","отменять препарат"],
+    answers:["refill","inconsistent adherence","given","necessity","health provider","in a timely manner","discontinue"]
+  },
+  {
+    title:"Case 10 — Patient transfer",
+    text:"A 61-year-old woman is transferred to a tertiary care institution. During patient handoff, the receiving physician reviews the sign-out notes and obtains additional information from the family. The team continues to provide care while the patient's condition remains stable.",
+    prompts:["учреждение третичного уровня","передача пациента","записи при передаче пациента","получать информацию","оказывать медицинскую помощь","оставаться стабильным"],
+    answers:["tertiary care institution","patient handoff","sign-out notes","obtain","provide care","remain stable"]
+  },
+  {
+    title:"Case 11 — Dermatology / Rheumatology",
+    text:"A patient with longstanding rheumatoid arthritis has swan-neck deformities and ulnar deviation of the fingers. Separately, well-demarcated plaques are present on the extensor aspects of the elbows and knees.",
+    prompts:["деформация по типу лебединой шеи","локтевая девиация","разгибательные поверхности"],
+    answers:["swan-neck deformity","ulnar deviation","extensor aspects"]
+  },
+  {
+    title:"Case 12 — Neurology",
+    text:"A right-handed patient is evaluated after a brief loss of consciousness. Sensation is intact in all extremities, and comprehension is preserved. The examiner also checks the anal wink and uses the iliac crest as an anatomical landmark.",
+    prompts:["правша","потеря сознания","чувствительность сохранена","понимание сохранено","анальный рефлекс","гребень подвздошной кости"],
+    answers:["right-handed","loss of consciousness","sensation is intact","comprehension is preserved","anal wink","iliac crest"]
+  }
+];
+
+const root = document.getElementById("cases");
+
+cases.forEach((c, idx) => {
+  const section = document.createElement("section");
+  section.className = "case";
+  section.innerHTML = `
+    <button class="case-head" type="button">
+      <span>${c.title}</span>
+      <span class="badge">раскрыть</span>
+    </button>
+    <div class="case-body hidden">
+      <div class="vignette">${c.text}</div>
+      <div class="task">Find the studied expressions meaning:</div>
+      <ul class="prompts">${c.prompts.map(p=>`<li>${p}</li>`).join("")}</ul>
+      <button class="answer-toggle" type="button">Показать ответ</button>
+      <div class="answer">
+        <strong>Answers:</strong>
+        <ul class="answer-list">${c.answers.map(a=>`<li>${a}</li>`).join("")}</ul>
+      </div>
+    </div>
+  `;
+  root.appendChild(section);
+
+  const head = section.querySelector(".case-head");
+  const body = section.querySelector(".case-body");
+  const badge = section.querySelector(".badge");
+  const answerBtn = section.querySelector(".answer-toggle");
+  const answer = section.querySelector(".answer");
+
+  head.addEventListener("click", () => {
+    const isHidden = body.classList.contains("hidden");
+    body.classList.toggle("hidden");
+    badge.textContent = isHidden ? "свернуть" : "раскрыть";
+  });
+
+  answerBtn.addEventListener("click", () => {
+    const open = answer.classList.toggle("open");
+    answerBtn.textContent = open ? "Скрыть ответ" : "Показать ответ";
+  });
+});
+
+document.getElementById("expandAll").addEventListener("click", () => {
+  document.querySelectorAll(".case-body").forEach(el => el.classList.remove("hidden"));
+  document.querySelectorAll(".badge").forEach(el => el.textContent = "свернуть");
+});
+
+document.getElementById("collapseAll").addEventListener("click", () => {
+  document.querySelectorAll(".case-body").forEach(el => el.classList.add("hidden"));
+  document.querySelectorAll(".badge").forEach(el => el.textContent = "раскрыть");
+  document.querySelectorAll(".answer").forEach(el => el.classList.remove("open"));
+  document.querySelectorAll(".answer-toggle").forEach(el => el.textContent = "Показать ответ");
+});
+</script>
+</body>
+</html>
